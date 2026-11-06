@@ -13,6 +13,8 @@ namespace PowerDimmer
         internal Action? ExitClicked;
         public NotifyIcon NotifyIcon;
 
+        private static void Safe(Action a) { try { a(); } catch (System.IO.IOException) { } catch (Exception) { } }
+
         public NotifyIconController(ISettings settings)
         {
             NotifyIcon = NotifyIconBuilder
@@ -33,28 +35,28 @@ namespace PowerDimmer
                                 }
                             };
                         })
-                        .AddHandler((b) => settings.DimmingEnabled = b))
+                        .AddHandler((b) => Safe(() => settings.DimmingEnabled = b)))
                     .AddToggle(option => option
                         .SetText("Затемнять панель задач")
                         .SetChecked(settings.DimTaskbar)
-                        .AddHandler((b) => settings.DimTaskbar = b))
+                        .AddHandler((b) => Safe(() => settings.DimTaskbar = b)))
                     .AddToggle(option => option
                         .SetText("Активно при запуске")
                         .SetChecked(settings.ActiveOnLaunch)
-                        .AddHandler((b) => settings.ActiveOnLaunch = b))
+                        .AddHandler((b) => Safe(() => settings.ActiveOnLaunch = b)))
                     .AddSeparator()
                     .AddButton(option => option
                         .SetText("Режим: выкл (0)")
-                        .AddHandler(() => { settings.Brightness = 0; settings.DimmingEnabled = false; }))
+                        .AddHandler(() => Safe(() => { settings.Brightness = 0; settings.DimmingEnabled = false; })))
                     .AddButton(option => option
                         .SetText("Режим: слабое (30)")
-                        .AddHandler(() => { settings.Brightness = 30; settings.DimmingEnabled = true; }))
+                        .AddHandler(() => Safe(() => { settings.Brightness = 30; settings.DimmingEnabled = true; })))
                     .AddButton(option => option
                         .SetText("Режим: среднее (60)")
-                        .AddHandler(() => { settings.Brightness = 60; settings.DimmingEnabled = true; }))
+                        .AddHandler(() => Safe(() => { settings.Brightness = 60; settings.DimmingEnabled = true; })))
                     .AddButton(option => option
                         .SetText("Режим: глухое (100)")
-                        .AddHandler(() => { settings.Brightness = 100; settings.DimmingEnabled = true; }))
+                        .AddHandler(() => Safe(() => { settings.Brightness = 100; settings.DimmingEnabled = true; })))
                     .AddSeparator()
                     .AddItem(new TrackBarMenuItem(settings))
                     .AddSeparator()
@@ -92,21 +94,35 @@ namespace PowerDimmer
         public TrackBarMenuItem(ISettings settings) : base(new ContainerControl())
         {
             BackColor = ThemeDictionary.ChromeMidium;
+            Control.Size = new Size(222, 66);
 
             var brightnessLabel = new Label()
             {
                 Parent = Control,
-                Text = "Режим затемнения (0–100)",
-                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "Затемнение:",
+                AutoSize = true,
+                Location = new Point(8, 8),
+            };
+
+            var valueBox = new TextBox()
+            {
+                Parent = Control,
+                Location = new Point(166, 6),
+                Size = new Size(48, 20),
+                Enabled = false,
+                BackColor = ThemeDictionary.ChromeMidium,
+                TextAlign = HorizontalAlignment.Center,
+                BorderStyle = BorderStyle.None,
+                Text = settings.Brightness.ToString()
             };
 
             trackBar = new TrackBarWithoutFocus
             {
                 Parent = Control,
-                Top = 22,
+                Location = new Point(6, 30),
+                Size = new Size(208, 32),
                 Minimum = 0,
                 Maximum = 100,
-                TickFrequency = 1,
                 SmallChange = 5,
                 LargeChange = 20,
                 TickStyle = TickStyle.None,
@@ -115,18 +131,6 @@ namespace PowerDimmer
             // Hack to restore hover-highlights after interacting
             // with trackbar
             trackBar.Click += (_, _) => Parent.Focus();
-
-            var valueBox = new TextBox()
-            {
-                Parent = trackBar,
-                Top = 28,
-                Left = 1,
-                Enabled = false,
-                BackColor = ThemeDictionary.ChromeMidium,
-                TextAlign = HorizontalAlignment.Center,
-                BorderStyle = BorderStyle.None,
-                Text = settings.Brightness.ToString()
-            };
 
             var saveTimer = new System.Windows.Forms.Timer { Interval = 400 };
             saveTimer.Tick += (_, _) => { saveTimer.Stop(); TrySave(); };

@@ -27,8 +27,11 @@ namespace PowerDimmer
 
         public App()
         {
-            settings = new ConfigurationBuilder<ISettings>().UseJsonFile("settings.json").Build();
-            settings.DimmingEnabled = settings.ActiveOnLaunch;
+            settings = new ConfigurationBuilder<ISettings>()
+                .UseJsonFile(System.IO.Path.Combine(AppContext.BaseDirectory, "settings.json"))
+                .Build();
+            try { settings.DimmingEnabled = settings.ActiveOnLaunch; }
+            catch (System.IO.IOException) { /* файл настроек занят — продолжим с дефолтами */ }
             settings.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(settings.Brightness))
