@@ -90,6 +90,7 @@ namespace PowerDimmer
     public class TrackBarMenuItem : ToolStripControlHost
     {
         private TrackBar trackBar;
+        private System.Windows.Forms.Timer saveTimer;
 
         public TrackBarMenuItem(ISettings settings) : base(new ContainerControl())
         {
@@ -132,7 +133,7 @@ namespace PowerDimmer
             // with trackbar
             trackBar.Click += (_, _) => Parent.Focus();
 
-            var saveTimer = new System.Windows.Forms.Timer { Interval = 400 };
+            saveTimer = new System.Windows.Forms.Timer { Interval = 400 };
             saveTimer.Tick += (_, _) => { saveTimer.Stop(); TrySave(); };
 
             trackBar.ValueChanged += (o, s) =>
