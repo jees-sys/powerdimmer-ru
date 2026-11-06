@@ -15,7 +15,7 @@ namespace PowerDimmer
     public partial class App : Application
     {
         private IntPtr curFgHwnd;
-        private ISettings settings;
+        private Settings settings;
         private Mutex? _singleInstanceMutex;
         private List<DimWindow> dimWindows { get; } = new();
         private List<WindowShade> shadeWindows { get; } = new();
@@ -27,9 +27,8 @@ namespace PowerDimmer
 
         public App()
         {
-            settings = new ConfigurationBuilder<ISettings>()
-                .UseJsonFile(System.IO.Path.Combine(AppContext.BaseDirectory, "settings.json"))
-                .Build();
+            settings = new Settings();
+            settings.Load();
             try { settings.DimmingEnabled = settings.ActiveOnLaunch; }
             catch (System.IO.IOException) { /* файл настроек занят — продолжим с дефолтами */ }
             settings.PropertyChanged += (s, e) =>
