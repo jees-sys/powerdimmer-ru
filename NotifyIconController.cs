@@ -128,12 +128,22 @@ namespace PowerDimmer
                 Text = settings.Brightness.ToString()
             };
 
+            var saveTimer = new System.Windows.Forms.Timer { Interval = 400 };
+            saveTimer.Tick += (_, _) => { saveTimer.Stop(); TrySave(); };
+
             trackBar.ValueChanged += (o, s) =>
                 {
-                    // invert for "brightness" value
-                    settings.Brightness = trackBar.Value;
                     valueBox.Text = trackBar.Value.ToString();
+                    saveTimer.Stop();
+                    saveTimer.Start();
                 };
+
+            void TrySave()
+            {
+                try { settings.Brightness = trackBar.Value; }
+                catch (System.IO.IOException) { /* файл настроек временно занят — пропускаем, не роняем приложение */ }
+                catch (Exception) { }
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -15,6 +16,7 @@ namespace PowerDimmer
     {
         private IntPtr curFgHwnd;
         private ISettings settings;
+        private Mutex? _singleInstanceMutex;
         private List<DimWindow> dimWindows { get; } = new();
         private List<WindowShade> shadeWindows { get; } = new();
         private SortedSet<IntPtr> pinnedHandles { get; } = new();
@@ -49,6 +51,14 @@ namespace PowerDimmer
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
+            bool createdNew;
+            _singleInstanceMutex = new Mutex(true, "PowerDimmer_SingleInstance_RU_2026", out createdNew);
+            if (!createdNew)
+            {
+                Shutdown();
+                return;
+            }
+
             curFgHwnd = Win32.GetForegroundWindow();
 
             var iconController = new NotifyIconController(settings);
