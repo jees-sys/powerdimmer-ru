@@ -21,7 +21,7 @@ namespace PowerDimmer
                 .Create()
                 .Configure(builder => builder
                     .AddToggle(option => option
-                        .SetText("Затемнение активно")
+                        .SetText("Затемнение активно / Dimming active")
                         .SetChecked(settings.ActiveOnLaunch)
                         .ConfigureItem(item =>
                         {
@@ -37,25 +37,25 @@ namespace PowerDimmer
                         })
                         .AddHandler((b) => Safe(() => settings.DimmingEnabled = b)))
                     .AddToggle(option => option
-                        .SetText("Затемнять панель задач")
+                        .SetText("Затемнять панель задач / Dim taskbar")
                         .SetChecked(settings.DimTaskbar)
                         .AddHandler((b) => Safe(() => settings.DimTaskbar = b)))
                     .AddToggle(option => option
-                        .SetText("Активно при запуске")
+                        .SetText("Активно при запуске / Active on launch")
                         .SetChecked(settings.ActiveOnLaunch)
                         .AddHandler((b) => Safe(() => settings.ActiveOnLaunch = b)))
                     .AddSeparator()
                     .AddButton(option => option
-                        .SetText("Режим: выкл (0)")
+                        .SetText("Режим: выкл (0) / Off (0)")
                         .AddHandler(() => Safe(() => { settings.Brightness = 0; settings.DimmingEnabled = false; })))
                     .AddButton(option => option
-                        .SetText("Режим: слабое (30)")
+                        .SetText("Режим: слабое (30) / Soft (30)")
                         .AddHandler(() => Safe(() => { settings.Brightness = 30; settings.DimmingEnabled = true; })))
                     .AddButton(option => option
-                        .SetText("Режим: среднее (60)")
+                        .SetText("Режим: среднее (60) / Medium (60)")
                         .AddHandler(() => Safe(() => { settings.Brightness = 60; settings.DimmingEnabled = true; })))
                     .AddButton(option => option
-                        .SetText("Режим: глухое (100)")
+                        .SetText("Режим: глухое (100) / Dark (100)")
                         .AddHandler(() => Safe(() => { settings.Brightness = 100; settings.DimmingEnabled = true; })))
                     .AddSeparator()
                     .AddItem(new TrackBarMenuItem(settings))
@@ -65,7 +65,7 @@ namespace PowerDimmer
                         .AddHandler(() => ExitClicked?.Invoke())))
                 .Build(Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location)!);
 
-            NotifyIcon.Text = "Затемнение окон — PowerDimmer";
+            NotifyIcon.Text = "Затемнение окон — PowerDimmer / Window dimmer — PowerDimmer";
             NotifyIcon.Visible = true;
         }
     }
@@ -100,7 +100,7 @@ namespace PowerDimmer
             var brightnessLabel = new Label()
             {
                 Parent = Control,
-                Text = "Затемнение:",
+                Text = "Затемнение / Dim:",
                 AutoSize = true,
                 Location = new Point(8, 8),
             };

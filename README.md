@@ -1,46 +1,35 @@
-# PowerDimmer RU
+# PowerDimmer
 
-A distraction dimmer for Windows: dims inactive windows so that only the one you are working in stays bright. A fork of [shayne/PowerDimmer](https://github.com/shayne/PowerDimmer) (MIT) with reliability fixes and a Russian tray UI.
+[![Main workflow](https://github.com/shayne/PowerDimmer/actions/workflows/workflow.yml/badge.svg)](https://github.com/shayne/PowerDimmer/releases/tag/main)
 
-![Concept](https://github.com/shayne/PowerDimmer/raw/main/.github/powerdimmer.png)
+A simple distraction dimmer for Windows
 
-## Why this fork
+| [<img src="https://user-images.githubusercontent.com/79330/147771591-853256ae-f4f1-42d3-8c68-ea467febeb58.png" width="800" />](https://user-images.githubusercontent.com/79330/147771591-853256ae-f4f1-42d3-8c68-ea467febeb58.png) |
+| :--: |
+| *Dim everything but focused window* |
 
-The original is great, but on some Windows setups its settings silently stop being saved (the `Config.Net` JSON store uses `File.Replace`, which can fail and, in the worst case, crash the app). This fork replaces that with a simple, robust settings implementation and adds quality-of-life features.
+| [<img src="https://user-images.githubusercontent.com/79330/147770555-5efe9efc-88e1-438e-a559-47b5f495976b.png" width="800" />](https://user-images.githubusercontent.com/79330/147770555-5efe9efc-88e1-438e-a559-47b5f495976b.png) |
+| :--: |
+| *Multiple focused windows via dimming toggle hotkey* |
 
-**Improvements over the original:**
+## Features
 
-- **Russian tray menu** with one-click presets: `Off (0)`, `Soft (30)`, `Medium (60)`, `Dark (100)`.
-- **Dim slider 0–100** in the tray — the value is the *dim strength*: 0 = no dimming, 100 = full blackout around the active window.
-- **Reliable settings**: plain JSON at `%APPDATA%\PowerDimmer\settings.json`, written via a temp file + copy with retries — no `File.Replace`, no lost changes, no crashes.
-- **Debounced slider saving** — the settings file is no longer rewritten on every tick.
-- **Single-instance guard** (named mutex).
-- Every settings write is fault-tolerant; the app never crashes because of the settings file.
+Initial Release
 
-## Features (inherited)
+* Dims all but currently focused window
+* Toggle dimming for a specific window via `Win + Shift + D`
+* Adjust brightness level from the system tray context menu
 
-- Dims everything except the currently focused window.
-- Pin/unpin a window so it stays bright: `Win + Shift + D`.
-- Window shade for that one blinding window without dark mode: `Win + Alt + S`.
-- Shade a rectangular area of a window: `Win + Alt + A`.
-- Optional taskbar dimming, multi-monitor support.
-
-## Usage
-
-1. Download a build or [build it yourself](#building).
-2. Run `PowerDimmer.exe` — the app has **no window**, it lives in the system tray.
-3. Right-click the tray icon: toggles, presets, the dim slider, and exit.
-
-> **Emergency switch:** `Win + Ctrl + Alt + D` toggles dimming on/off instantly. If you set 100% and the screen goes black around you, press it. 😄
+New features
+* Toggle shade for a specific window via `Win + Alt + S`, usefull for that one bright screen without darkmode
+* Shade an area of a window via `Win + Alt + A` then select the area to shade. The shade will move with the window
 
 ## Building
 
-Requires the [.NET SDK](https://dotnet.microsoft.com/en-us/download) (6.0 or newer).
+Just install the [.NET 6.0 SDK](https://dotnet.microsoft.com/en-us/download) and then `dotnet run` 
 
-```
-dotnet build
-```
+## Context
 
-## License
+I threw this project together after finding my own need PowerDimmer. I initially tried LeDimmer. It works well enough, but it's abandoned, closed source and very out of date.
 
-MIT. Based on [PowerDimmer](https://github.com/shayne/PowerDimmer) by [shayne](https://github.com/shayne).
+A fan of PowerToys I checked for an open issue and found [microsoft/PowerToys#13035](https://github.com/microsoft/PowerToys/issues/13035). I decided to write this to try and gain support and get this module added to PowerToys.
